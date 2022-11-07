@@ -11,7 +11,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
@@ -20,7 +19,8 @@
       "@layouts/*": ["layouts/*"],
       "@components": ["components/index.ts"],
       "@layouts": ["layouts/index.ts"]
-    }
+    },
+    "isolatedModules": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
