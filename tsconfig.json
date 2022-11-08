@@ -15,10 +15,9 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["components/*"],
-      "@layouts/*": ["layouts/*"],
       "@components": ["components/index.ts"],
-      "@layouts": ["layouts/index.ts"]
+      "@layouts": ["layouts/index.ts"],
+      "@services": ["services/index.ts"]
     },
     "isolatedModules": true
   },

@@ -1,3 +1,3 @@
-export { default as HomeLayout } from '@layouts/Home';
-export { default as FavouritesLayout } from '@layouts/Favourites';
-export { default as CreateLayout } from '@layouts/Create';
+export { default as HomeLayout } from './Home';
+export { default as FavouritesLayout } from './Favourites';
+export { default as CreateLayout } from './Create';

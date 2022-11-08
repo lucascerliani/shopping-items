@@ -3,3 +3,9 @@ export interface CreateCategory {
   color: string;
   items: any[];
 }
+
+export interface CreateItem {
+  item: string;
+  category: string;
+  image: File;
+}
