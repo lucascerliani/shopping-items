@@ -17,7 +17,8 @@
     "paths": {
       "@components": ["components/index.ts"],
       "@layouts": ["layouts/index.ts"],
-      "@services": ["services/index.ts"]
+      "@services": ["services/index.ts"],
+      "@hooks": ["hooks/index.ts"]
     },
     "isolatedModules": true
   },

@@ -27,9 +27,15 @@ export async function createItem(itemObj: CreateItem) {
 }
 
 function validateItem(item: string, categories: any): void {
-  const itemsNames = categories.map((categoryObj: any) => {
-    return categoryObj.items.map((itemObj: any) => itemObj.item);
+  let itemsNames: string[] = [];
+
+  categories.map((categoryObj: any) => {
+    return categoryObj.items.map((itemObj: any) =>
+      itemsNames.push(itemObj.item)
+    );
   });
+
+  console.log(itemsNames);
 
   if (itemsNames.some((itemName: string) => itemName === item)) {
     throw new Error('Item name already exists');

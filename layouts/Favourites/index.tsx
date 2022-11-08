@@ -1,53 +1,16 @@
 import { Template, CategoriesAndItems } from '@components';
+import { useGetCategories } from '@hooks';
 
 const FavouritesLayout = () => {
-  const itemsByCategories = [
-    {
-      category: 'Cleaning',
-      color: 'red',
-      items: [
-        {
-          item: 'Mr. Músculo',
-          image: '/ariel.jpg',
-          favourite: false,
-        },
-        {
-          item: 'Ayudín',
-          image: '/ariel.jpg',
-          favourite: true,
-        },
-        {
-          item: 'Cif',
-          image: '/ariel.jpg',
-          favourite: false,
-        },
-        {
-          item: 'Ala',
-          image: '/ariel.jpg',
-          favourite: true,
-        },
-        {
-          item: 'Blem',
-          image: '/ariel.jpg',
-          favourite: false,
-        },
-        {
-          item: 'Skip',
-          image: '/ariel.jpg',
-          favourite: true,
-        },
-        {
-          item: 'Sun',
-          image: '/ariel.jpg',
-          favourite: false,
-        },
-      ],
-    },
-  ];
+  const { categories, loading } = useGetCategories();
 
   return (
     <Template pageTitle="Favourite items">
-      <CategoriesAndItems itemsByCategory={itemsByCategories} favourites />
+      <CategoriesAndItems
+        itemsByCategory={categories}
+        loading={loading}
+        favourites
+      />
     </Template>
   );
 };

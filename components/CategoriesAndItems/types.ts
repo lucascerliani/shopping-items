@@ -34,6 +34,9 @@ export const CategoriesAndItemsPropTypes = {
   itemsByCategory: PropTypes.arrayOf(PropTypes.shape(Category).isRequired)
     .isRequired,
 
+  /** If it's loading */
+  loading: PropTypes.bool.isRequired,
+
   /** Only returns favourite items */
   favourites: PropTypes.bool,
 };

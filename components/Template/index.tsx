@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import {
   Button,
   Container,
@@ -31,15 +32,15 @@ const Template = ({ children, pageTitle }: TemplateTypes): JSX.Element => {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-end flex-grow-1 pe-3">
-                <Nav.Link className="fs-5" href="/">
+                <Link className="fs-5 nav-link" href="/">
                   Items
-                </Nav.Link>
-                <Nav.Link className="fs-5" href="/favourites">
+                </Link>
+                <Link className="fs-5 nav-link" href="/favourites">
                   Favourites
-                </Nav.Link>
-                <Nav.Link className="fs-5" href="/create">
+                </Link>
+                <Link className="fs-5 nav-link" href="/create">
                   Create item or category
-                </Nav.Link>
+                </Link>
               </Nav>
               <Form className="d-flex">
                 <Form.Control

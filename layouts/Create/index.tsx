@@ -1,18 +1,24 @@
 import { useState } from 'react';
-import { BooleanToggle, Template } from '@components';
+import { BooleanToggle, Template, CustomToast } from '@components';
 import { ItemOrCategory } from './types';
 import { Button, Col, Form, Row, Toast } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
+import { createItem } from '@services';
+import { CreateItem } from 'services/types';
+import { useGetCategories } from '@hooks';
 
 const CreateLayout = () => {
   const [thingToCreate, setThingToCreate] = useState<ItemOrCategory>('Item');
   const [itemName, setItemName] = useState<string>('');
   const [itemCategory, setItemCategory] = useState<string>('');
   const [itemImage, setItemImage] = useState<File>();
-  const [showItemToast, setShowItemToast] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryColor, setCategoryColor] = useState<string>('');
   const [showCategoryToast, setShowCategoryToast] = useState<boolean>(false);
+  const [showItemToast, setShowItemToast] = useState<boolean>(false);
+  const [successItemToast, setSuccessItemToast] = useState<boolean>(false);
+
+  const { categories } = useGetCategories();
 
   const handleToggleChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -31,7 +37,23 @@ const CreateLayout = () => {
     }
   };
 
-  const categories = ['Cleaning', 'Sports', 'Health care', 'Personal care'];
+  const onCreateItemClick = async () => {
+    const newItem: CreateItem = {
+      item: itemName,
+      category: itemCategory,
+      image: itemImage!,
+    };
+
+    createItem(newItem)
+      .then(() => {
+        setSuccessItemToast(true);
+        setShowItemToast(true);
+      })
+      .catch(() => {
+        setSuccessItemToast(false);
+        setShowItemToast(true);
+      });
+  };
 
   return (
     <Template>
@@ -46,21 +68,13 @@ const CreateLayout = () => {
         {`Create ${thingToCreate.toLowerCase()}`}
       </h1>
       {thingToCreate === 'Item' ? (
-        <Toast
-          bg="success"
+        <CustomToast
+          success={successItemToast}
           onClose={() => setShowItemToast(false)}
           show={showItemToast}
-          className="m-auto mb-4"
-          delay={3000}
-          autohide
-        >
-          <Toast.Header>
-            <strong className="me-auto">Create item</strong>
-          </Toast.Header>
-          <Toast.Body>
-            <strong>Your item was successfully created.</strong>
-          </Toast.Body>
-        </Toast>
+          thingToCreate="Item"
+          nameOrColor="name"
+        />
       ) : (
         <Toast
           bg="success"
@@ -101,9 +115,9 @@ const CreateLayout = () => {
                   <option key="0" value="">
                     Select a category
                   </option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
+                  {categories.map((category: any) => (
+                    <option key={category.category} value={category.category}>
+                      {category.category}
                     </option>
                   ))}
                 </Form.Select>
@@ -119,7 +133,7 @@ const CreateLayout = () => {
               </Form.Group>
               <div className="w-100 text-center mt-4">
                 <Button
-                  onClick={() => setShowItemToast(true)}
+                  onClick={onCreateItemClick}
                   variant="primary"
                   disabled={!itemName || !itemCategory || !itemImage}
                 >
@@ -143,7 +157,7 @@ const CreateLayout = () => {
                 <Form.Label>Category color</Form.Label>
                 <SketchPicker
                   color={categoryColor}
-                  onChange={(color) => setCategoryColor(color.hex)}
+                  onChange={(color) => setCategoryColor(`#${color.hex}`)}
                 />
               </Form.Group>
               <div className="w-100 text-center mt-4">
