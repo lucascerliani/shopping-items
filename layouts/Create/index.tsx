@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { BooleanToggle, Template, CustomToast } from '@components';
 import { ItemOrCategory } from './types';
-import { Button, Col, Form, Row, Spinner, Toast } from 'react-bootstrap';
+import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 import { createCategory, createItem } from '@services';
 import { CreateCategory, CreateItem } from 'services/types';
 import { useGetCategories } from '@hooks';
+import { addCategory, selectValue } from '../../slices/categorySlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 const CreateLayout = () => {
   const [thingToCreate, setThingToCreate] = useState<ItemOrCategory>('Item');
@@ -22,7 +24,11 @@ const CreateLayout = () => {
   const [categoryColorError, setCategoryColorError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { categories } = useGetCategories();
+  useGetCategories();
+
+  const categories = useSelector(selectValue);
+
+  const dispatch = useDispatch();
 
   const handleToggleChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -63,6 +69,7 @@ const CreateLayout = () => {
   };
 
   const onCreateCategoryClick = async () => {
+    setLoading(true);
     const newCategory: CreateCategory = {
       category: categoryName,
       color: categoryColor,
@@ -71,6 +78,7 @@ const CreateLayout = () => {
 
     createCategory(newCategory)
       .then(() => {
+        dispatch(addCategory(newCategory));
         setLoading(false);
         setSuccessCategoryToast(true);
         setShowCategoryToast(true);

@@ -4,3 +4,6 @@ export { getCategories } from './getCategories';
 export { getCategory } from './getCategory';
 export { uploadImage } from './uploadImage';
 export { getImageUrl } from './getImageUrl';
+export { deleteCategory } from './deleteCategory';
+export { deleteItem } from './deleteItem';
+export { changeFavourite } from './changeFavourite';

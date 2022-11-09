@@ -1,12 +1,10 @@
 import { getCategories } from '@services';
 import { useEffect, useState } from 'react';
-import { initializeState, selectValue } from '../slices/categorySlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { initializeState } from '../slices/categorySlice';
+import { useDispatch } from 'react-redux';
 
 export const useGetCategories = () => {
   const [loading, setLoading] = useState<boolean>(true);
-
-  const categories = useSelector(selectValue);
 
   const dispatch = useDispatch();
 
@@ -21,5 +19,5 @@ export const useGetCategories = () => {
     categoriesList();
   }, []);
 
-  return { categories, loading };
+  return { loading };
 };

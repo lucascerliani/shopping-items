@@ -3,20 +3,69 @@ import {
   CategoriesAndItemsTypes,
   Item,
 } from './types';
-import { AccordionToggle, ItemCard } from '@components';
+import { AccordionToggle, CustomModal, ItemCard } from '@components';
 import { Accordion, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useGetCategories } from '@hooks';
+import {
+  selectValue,
+  removeCategory,
+  removeItem,
+} from '../../slices/categorySlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteCategory, deleteItem } from '@services';
+import { useState } from 'react';
 
 const CategoriesAndItems = ({
   favourites = false,
 }: CategoriesAndItemsTypes): JSX.Element => {
-  const { categories, loading } = useGetCategories();
+  const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false);
+  const [showItemModal, setShowItemModal] = useState<boolean>(false);
 
-  const DisplayItemCard = (itemIndex: number, itemObject: Item) => (
+  const { loading } = useGetCategories();
+
+  const categories = useSelector(selectValue);
+
+  const dispatch = useDispatch();
+
+  const DisplayItemCard = (
+    categoryName: string,
+    itemIndex: number,
+    itemObject: Item
+  ) => (
     <Col key={String(itemIndex)} xs={12} md={6} lg={3}>
-      <ItemCard name={itemObject.item} image={itemObject.image} />
+      <ItemCard
+        category={categoryName}
+        name={itemObject.item}
+        image={itemObject.image}
+        onDeleteItem={() => setShowItemModal(true)}
+        favourite={itemObject.favourite}
+      />
     </Col>
   );
+
+  const handleDeleteCategory = async (categoryName: string) => {
+    console.log(categoryName);
+    deleteCategory(categoryName)
+      .then(() => {
+        dispatch(removeCategory(categoryName));
+        setShowCategoryModal(false);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleDeleteItem = async (categoryName: string, itemName: string) => {
+    deleteItem(categoryName, itemName)
+      .then(() => {
+        dispatch(removeItem({ categoryName, itemName }));
+        setShowItemModal(false);
+      })
+      .catch((error) => {
+        setShowItemModal(false);
+        console.log(error);
+      });
+  };
+
+  const onCategoryDeleteClick = () => {};
 
   return (
     <>
@@ -48,6 +97,7 @@ const CategoriesAndItems = ({
                     <i
                       className="bi bi-trash fs-3 pe-1"
                       style={{ cursor: 'pointer' }}
+                      onClick={() => setShowCategoryModal(true)}
                     />
                   </div>
                 </Card.Header>
@@ -62,11 +112,55 @@ const CategoriesAndItems = ({
                           ? categoryObj.items
                               .filter((itemObj: Item) => itemObj.favourite)
                               .map((itemObj: Item, itemIndex: number) => {
-                                return DisplayItemCard(itemIndex, itemObj);
+                                return (
+                                  <>
+                                    {DisplayItemCard(
+                                      categoryObj.category,
+                                      itemIndex,
+                                      itemObj
+                                    )}
+                                    <CustomModal
+                                      key={`item-modal-${itemIndex}`}
+                                      thingToDelete="item"
+                                      show={showItemModal}
+                                      handleClose={() =>
+                                        setShowItemModal(false)
+                                      }
+                                      handleDelete={() =>
+                                        handleDeleteItem(
+                                          categoryObj.category,
+                                          itemObj.item
+                                        )
+                                      }
+                                    />
+                                  </>
+                                );
                               })
                           : categoryObj.items.map(
                               (itemObj: Item, itemIndex: number) => {
-                                return DisplayItemCard(itemIndex, itemObj);
+                                return (
+                                  <>
+                                    {DisplayItemCard(
+                                      categoryObj.category,
+                                      itemIndex,
+                                      itemObj
+                                    )}
+                                    <CustomModal
+                                      key={`item-modal-${itemIndex}`}
+                                      thingToDelete="item"
+                                      show={showItemModal}
+                                      handleClose={() =>
+                                        setShowItemModal(false)
+                                      }
+                                      handleDelete={() =>
+                                        handleDeleteItem(
+                                          categoryObj.category,
+                                          itemObj.item
+                                        )
+                                      }
+                                    />
+                                  </>
+                                );
                               }
                             )}
                       </Row>
@@ -74,6 +168,16 @@ const CategoriesAndItems = ({
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>
+              <CustomModal
+                key={`category-modal-${categoryIndex}`}
+                thingToDelete="category"
+                show={showCategoryModal}
+                handleClose={() => setShowCategoryModal(false)}
+                handleDelete={() => {
+                  console.log(categoryObj);
+                  handleDeleteCategory(categoryObj.category);
+                }}
+              />
             </Accordion>
           );
         })
