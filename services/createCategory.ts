@@ -26,7 +26,8 @@ async function validateCategory(categoryObj: CreateCategory): Promise<void> {
 
   if (
     categoriesNames.some(
-      (categoryName: string) => categoryName === categoryObj.category
+      (categoryName: string) =>
+        categoryName.toLowerCase() === categoryObj.category.toLowerCase()
     )
   ) {
     throw new Error('Category name already exists');
@@ -34,7 +35,8 @@ async function validateCategory(categoryObj: CreateCategory): Promise<void> {
 
   if (
     categoriesColors.some(
-      (categoryColor: string) => categoryColor === categoryObj.color
+      (categoryColor: string) =>
+        categoryColor.toLowerCase() === categoryObj.color.toLowerCase()
     )
   ) {
     throw new Error('Another category already has this color');

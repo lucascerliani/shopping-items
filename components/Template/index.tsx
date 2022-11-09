@@ -32,25 +32,16 @@ const Template = ({ children, pageTitle }: TemplateTypes): JSX.Element => {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-end flex-grow-1 pe-3">
-                <Link className="fs-5 nav-link" href="/">
+                <Link className="fs-4 px-3 nav-link" href="/">
                   Items
                 </Link>
-                <Link className="fs-5 nav-link" href="/favourites">
+                <Link className="fs-4 px-3 nav-link" href="/favourites">
                   Favourites
                 </Link>
-                <Link className="fs-5 nav-link" href="/create">
+                <Link className="fs-4 ps-3 pe-0 nav-link" href="/create">
                   Create item or category
                 </Link>
               </Nav>
-              <Form className="d-flex">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                />
-                <Button>Search</Button>
-              </Form>
             </Offcanvas.Body>
           </Navbar.Offcanvas>
         </Container>

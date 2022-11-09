@@ -1,12 +1,19 @@
-import { collection, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
-export function getCategory(categoryName: string): any {
+export async function getCategory(categoryName: string): Promise<any> {
   const categoriesRef = collection(db, 'categories');
 
-  const category = query(categoriesRef, where('category', '==', categoryName));
+  const queryObj = query(categoriesRef, where('category', '==', categoryName));
 
-  console.log(category);
+  const queryData = await getDocs(queryObj);
 
-  return category;
+  const categoryObj = queryData.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  })[0];
+
+  return categoryObj;
 }
