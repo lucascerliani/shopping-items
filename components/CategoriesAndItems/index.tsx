@@ -5,12 +5,13 @@ import {
 } from './types';
 import { AccordionToggle, ItemCard } from '@components';
 import { Accordion, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { useGetCategories } from '@hooks';
 
 const CategoriesAndItems = ({
-  itemsByCategory,
-  loading,
   favourites = false,
 }: CategoriesAndItemsTypes): JSX.Element => {
+  const { categories, loading } = useGetCategories();
+
   const DisplayItemCard = (itemIndex: number, itemObject: Item) => (
     <Col key={String(itemIndex)} xs={12} md={6} lg={3}>
       <ItemCard name={itemObject.item} image={itemObject.image} />
@@ -26,7 +27,7 @@ const CategoriesAndItems = ({
           </Spinner>
         </div>
       ) : (
-        itemsByCategory.map((categoryObj, categoryIndex) => {
+        categories.map((categoryObj, categoryIndex) => {
           return (
             <Accordion
               key={String(categoryIndex)}
@@ -59,13 +60,15 @@ const CategoriesAndItems = ({
                       <Row>
                         {favourites
                           ? categoryObj.items
-                              .filter((itemObj) => itemObj.favourite)
-                              .map((itemObj, itemIndex) => {
+                              .filter((itemObj: Item) => itemObj.favourite)
+                              .map((itemObj: Item, itemIndex: number) => {
                                 return DisplayItemCard(itemIndex, itemObj);
                               })
-                          : categoryObj.items.map((itemObj, itemIndex) => {
-                              return DisplayItemCard(itemIndex, itemObj);
-                            })}
+                          : categoryObj.items.map(
+                              (itemObj: Item, itemIndex: number) => {
+                                return DisplayItemCard(itemIndex, itemObj);
+                              }
+                            )}
                       </Row>
                     </Container>
                   </Card.Body>

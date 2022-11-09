@@ -2,6 +2,7 @@ import { updateDoc, doc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { getCategories } from './getCategories';
 import { getCategory } from './getCategory';
+import { getImageUrl } from './getImageUrl';
 import { CreateItem } from './types';
 import { uploadImage } from './uploadImage';
 
@@ -12,11 +13,13 @@ export async function createItem(itemObj: CreateItem): Promise<void> {
 
   const imagePath = await uploadImage(itemObj.image);
 
+  const imageUrl = await getImageUrl(imagePath);
+
   const categoryObj = await getCategory(itemObj.category);
 
   const newItem = {
     item: itemObj.item,
-    image: imagePath,
+    image: imageUrl,
     favourite: false,
   };
 

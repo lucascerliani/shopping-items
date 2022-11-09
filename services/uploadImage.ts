@@ -1,5 +1,5 @@
 import { ref, uploadBytes } from 'firebase/storage';
-import { db, storage } from '../config/firebase';
+import { storage } from '../config/firebase';
 import { v4 } from 'uuid';
 
 export async function uploadImage(image: File): Promise<string> {

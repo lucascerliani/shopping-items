@@ -14,8 +14,8 @@ const CustomToast = ({
       onClose={onClose}
       show={show}
       className="m-auto mb-4"
-      delay={3000}
-      autohide={success}
+      delay={success ? 3000 : 5000}
+      autohide
     >
       <Toast.Header>
         <strong className="me-auto">
@@ -25,7 +25,7 @@ const CustomToast = ({
       <Toast.Body>
         <strong>
           {success
-            ? `Your ${thingToCreate} was successfully created.`
+            ? `Your ${thingToCreate.toLowerCase()} was successfully created.`
             : nameOrColor === 'name'
             ? `${thingToCreate} name already exists.`
             : 'Another category already has this color'}

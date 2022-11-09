@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { BooleanToggle, Template, CustomToast } from '@components';
 import { ItemOrCategory } from './types';
-import { Button, Col, Form, Row, Toast } from 'react-bootstrap';
+import { Button, Col, Form, Row, Spinner, Toast } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
-import { createItem } from '@services';
-import { CreateItem } from 'services/types';
+import { createCategory, createItem } from '@services';
+import { CreateCategory, CreateItem } from 'services/types';
 import { useGetCategories } from '@hooks';
 
 const CreateLayout = () => {
@@ -14,9 +14,13 @@ const CreateLayout = () => {
   const [itemImage, setItemImage] = useState<File>();
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryColor, setCategoryColor] = useState<string>('');
-  const [showCategoryToast, setShowCategoryToast] = useState<boolean>(false);
   const [showItemToast, setShowItemToast] = useState<boolean>(false);
   const [successItemToast, setSuccessItemToast] = useState<boolean>(false);
+  const [showCategoryToast, setShowCategoryToast] = useState<boolean>(false);
+  const [successCategoryToast, setSuccessCategoryToast] =
+    useState<boolean>(false);
+  const [categoryColorError, setCategoryColorError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { categories } = useGetCategories();
 
@@ -38,6 +42,7 @@ const CreateLayout = () => {
   };
 
   const onCreateItemClick = async () => {
+    setLoading(true);
     const newItem: CreateItem = {
       item: itemName,
       category: itemCategory,
@@ -46,12 +51,39 @@ const CreateLayout = () => {
 
     createItem(newItem)
       .then(() => {
+        setLoading(false);
         setSuccessItemToast(true);
         setShowItemToast(true);
       })
       .catch(() => {
+        setLoading(false);
         setSuccessItemToast(false);
         setShowItemToast(true);
+      });
+  };
+
+  const onCreateCategoryClick = async () => {
+    const newCategory: CreateCategory = {
+      category: categoryName,
+      color: categoryColor,
+      items: [],
+    };
+
+    createCategory(newCategory)
+      .then(() => {
+        setLoading(false);
+        setSuccessCategoryToast(true);
+        setShowCategoryToast(true);
+      })
+      .catch((error) => {
+        setLoading(false);
+        if (error.message.includes('color')) {
+          setCategoryColorError(true);
+        } else {
+          setCategoryColorError(false);
+        }
+        setSuccessCategoryToast(false);
+        setShowCategoryToast(true);
       });
   };
 
@@ -67,7 +99,13 @@ const CreateLayout = () => {
       <h1 className="text-decoration-underline text-center my-4">
         {`Create ${thingToCreate.toLowerCase()}`}
       </h1>
-      {thingToCreate === 'Item' ? (
+      {loading ? (
+        <div className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : thingToCreate === 'Item' ? (
         <CustomToast
           success={successItemToast}
           onClose={() => setShowItemToast(false)}
@@ -76,21 +114,13 @@ const CreateLayout = () => {
           nameOrColor="name"
         />
       ) : (
-        <Toast
-          bg="success"
+        <CustomToast
+          success={successCategoryToast}
           onClose={() => setShowCategoryToast(false)}
           show={showCategoryToast}
-          className="m-auto mb-4"
-          delay={3000}
-          autohide
-        >
-          <Toast.Header>
-            <strong className="me-auto">Create category</strong>
-          </Toast.Header>
-          <Toast.Body>
-            <strong>Your category was successfully created.</strong>
-          </Toast.Body>
-        </Toast>
+          thingToCreate="Category"
+          nameOrColor={categoryColorError ? 'color' : 'name'}
+        />
       )}
       <Row>
         <Col xs={12} md={{ span: 4, offset: 4 }} className="align-self-center">
@@ -157,12 +187,12 @@ const CreateLayout = () => {
                 <Form.Label>Category color</Form.Label>
                 <SketchPicker
                   color={categoryColor}
-                  onChange={(color) => setCategoryColor(`#${color.hex}`)}
+                  onChange={(color) => setCategoryColor(color.hex)}
                 />
               </Form.Group>
               <div className="w-100 text-center mt-4">
                 <Button
-                  onClick={() => setShowCategoryToast(true)}
+                  onClick={onCreateCategoryClick}
                   variant="primary"
                   disabled={!categoryName || !categoryColor}
                 >
